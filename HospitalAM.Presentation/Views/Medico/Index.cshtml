@@ -1,0 +1,102 @@
+﻿@model HospitalAM.Presentation.ViewModel.MedicoViewModel
+@{
+    ViewData["Title"] = "Lista de Médicos";
+}
+
+@functions {
+    public static string TranslateAtivo(bool ativo) => ativo ? "Ativo" : "Inativo";
+}
+
+<div class="container-xl py-4 px-4 px-md-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Médicos</h2>
+        <a asp-action="Create" asp-controller="Medicos" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> Novo Médico
+        </a>
+    </div>
+
+    <form asp-action="Index" method="get" class="mb-4">
+        <!-- Center everything, add gaps, align bottoms so the button lines up -->
+        <div class="row gx-3 gy-2 align-items-end justify-content-center">
+            <div class="col-12 col-md-3">
+                <input type="text"
+                       name="NomeFilter"
+                       value="@Model.NomeFilter"
+                       class="form-control"
+                       placeholder="Filtrar por nome..." autocomplete="off" />
+            </div>
+
+            <div class="col-12 col-md-3">
+                <input type="text"
+                       name="EspecialidadeFilter"
+                       value="@Model.EspecialidadeFilter"
+                       class="form-control"
+                       placeholder="Especialidade..." autocomplete="off" />
+            </div>
+
+            <div class="col-12 col-md-3">
+                <select name="HospitalFilter" class="form-select">
+                    <option value="">Todos os hospitais</option>
+                    @foreach (var h in Model.Hospitais)
+                    {
+                        <option value="@h.Value" selected="@(h.Selected ? "selected" : null)">@h.Text</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-6 col-md-2">
+                <select name="AtivoFilter" class="form-select">
+                    <option value="">Ativos e inativos</option>
+                    <option value="true" selected="@(Model.AtivoFilter == true ? "selected" : null)">Somente ativos</option>
+                    <option value="false" selected="@(Model.AtivoFilter == false ? "selected" : null)">Somente inativos</option>
+                </select>
+            </div>
+
+            <!-- Button right next to the last select, blue, no full width -->
+            <div class="col-6 col-md-auto">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Filtrar
+                </button>
+            </div>
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped mb-0">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Nome</th>
+                    <th>Especialidade</th>
+                    <th>CRM</th>
+                    <th>Email</th>
+                    <th>Hospital</th>
+                    <th>Status</th>
+                    <th style="width: 140px;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var m in Model.Medicos)
+                {
+                    <tr>
+                        <td>@m.Nome</td>
+                        <td>@(string.IsNullOrWhiteSpace(m.Especialidade) ? "-" : m.Especialidade)</td>
+                        <td>@m.CRM</td>
+                        <td>@m.Email</td>
+                        <td>@(string.IsNullOrWhiteSpace(m.HospitalNome) ? "-" : m.HospitalNome)</td>
+                        <td>@TranslateAtivo(m.Ativo)</td>
+                        <td class="text-center">
+                            <a asp-action="Details" asp-controller="Medicos" asp-route-id="@m.IdMedico"
+                               class="btn btn-sm btn-outline-info" title="Detalhes">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a asp-action="Edit" asp-controller="Medicos" asp-route-id="@m.IdMedico"
+                               class="btn btn-sm btn-outline-warning" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

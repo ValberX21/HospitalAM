@@ -3,9 +3,9 @@ using HospitalAM.Core.Interfaces.Repository;
 
 namespace HospitalAM.Infrastructure.Repository
 {
-    public class MedicoRepository : IBaseCRUDRepository<Medico>
+    public class EmpresaRepository : IBaseCRUDRepository<Empresa>
     {
-        public Task AddAsync(Medico entity, CancellationToken ct = default)
+        public Task AddAsync(Empresa entity, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
@@ -15,22 +15,22 @@ namespace HospitalAM.Infrastructure.Repository
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Medico>> GeAll(CancellationToken ct = default)
+        public Task<IEnumerable<Empresa>> GeAll(CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Medico?> GetByIDAsync(int id, CancellationToken ct = default)
+        public Task<Empresa?> GetByIDAsync(int id, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Medico>> GetPages(int page, int pageSize, CancellationToken ct = default)
+        public Task<IEnumerable<Empresa>> GetPages(int page, int pageSize, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(Medico entity, CancellationToken ct = default)
+        public Task UpdateAsync(Empresa entity, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }

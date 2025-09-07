@@ -60,9 +60,14 @@ namespace HospitalAM.Presentation.ViewModel
         /// null = Todos, true = Apenas Ativos, false = Apenas Inativos
         /// </summary>
         public bool? AtivoFilter { get; set; }
+        public int? HospitalFilter { get; set; }
 
         // ===== Results (grid/list) =====
-        public IEnumerable<MedicoListItemViewModel> Medicos { get; set; } = new List<MedicoListItemViewModel>();
+        public IEnumerable<MedicoListItemViewModel> Medicos { get; set; } = new List<MedicoListItemViewModel>(); 
 
+        public int PageNumber { get; set; } = 1;
+        public int PageSize { get; set; } = 10;          // 10 por página
+        public int TotalCount { get; set; }
+        public int TotalPages => (int)Math.Ceiling((double)TotalCount / Math.Max(1, PageSize));
     }
 }

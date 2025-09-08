@@ -31,11 +31,19 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group mb-3">
-                                    <label asp-for="IdEmpresa" class="control-label"></label>
-                                    <input asp-for="IdEmpresa" type="number" class="form-control" min="1" />
+                                    <label asp-for="IdEmpresa" class="control-label">Empresa</label>
+                                    <select asp-for="IdEmpresa" asp-items="Model.Empresas" class="form-select">
+                                        <option value="">-- Selecione --</option>
+                                    </select>
                                     <span asp-validation-for="IdEmpresa" class="text-danger"></span>
                                 </div>
                             </div>
+                               @*  <div class="form-group mb-3">
+                                    <label asp-for="IdEmpresa" class="control-label"></label>
+                                    <input asp-for="IdEmpresa" type="number" class="form-control" min="1" />
+                                    <span asp-validation-for="IdEmpresa" class="text-danger"></span>
+                                </div> *@
+                            
 
                             <div class="col-md-8">
                                 <div class="form-group mb-3">

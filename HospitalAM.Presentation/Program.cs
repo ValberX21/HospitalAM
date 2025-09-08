@@ -38,7 +38,10 @@ builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddScoped<IBaseCRUDRepository<Hospital>, HospitalRepository>();
+builder.Services.AddScoped<IHospitalRepository, HospitalRepository>();
+
+builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
+
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

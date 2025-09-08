@@ -21,8 +21,8 @@ namespace HospitalAM.Presentation.Controllers
         {
             var vm = new MedicoViewModel
             {
-                Hospitais = await GetHospitaisSelectAsync(),
-                Medicos = Enumerable.Empty<MedicoListItemViewModel>(),
+                //Hospitais = await GetHospitaisSelectAsync(),
+                //Medicos = Enumerable.Empty<MedicoListItemViewModel>(),
                 PageSize = 10,
                 PageNumber = 1
             };
@@ -37,9 +37,9 @@ namespace HospitalAM.Presentation.Controllers
             var vm = new MedicoViewModel
             {
                 Ativo = true,
-                Hospitais = await GetHospitaisSelectAsync(),
-                IdEmpresa = 1,
-                
+                Hospitais = await GetHospitaisSelectAsync()    ,
+                Empresas = await GetEmpresasSelectAsync()   
+
             };
 
             return View("CreateEditMedico", vm); 
@@ -60,6 +60,26 @@ namespace HospitalAM.Presentation.Controllers
             TempData["Success"] = "Médico criado com sucesso.";
             return RedirectToAction(nameof(Index));
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         // EDIT (GET)
         [HttpGet]
@@ -123,7 +143,7 @@ namespace HospitalAM.Presentation.Controllers
             });
         }
 
-        private async Task<int> GetEmpresasSelectAsync(int? empresaId = null)
+        private async Task<IEnumerable<SelectListItem>> GetEmpresasSelectAsync(int? empresaId = null)
         {
             List<Empresa> empresas = await _mediator.Send(new GetAllEmpresasQuery(empresaId));
 
@@ -132,9 +152,9 @@ namespace HospitalAM.Presentation.Controllers
 
             return empresas.Select(h => new SelectListItem
             {
-                Value = h.IdHospital.ToString(),
+                Value = h.IdEmpresa.ToString(),
                 Text = h.Nome,
-                Selected = (hospitalId.HasValue && h.IdHospital == hospitalId.Value)
+                Selected = (empresaId.HasValue && h.IdEmpresa == empresaId.Value)
             });
         }
     }

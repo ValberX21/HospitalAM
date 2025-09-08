@@ -1,18 +1,16 @@
-﻿using HospitalAM.Application.DTOs;
-using HospitalAM.Application.Queries;
+﻿using HospitalAM.Application.Queries;
 using HospitalAM.Core.Entities;
 using HospitalAM.Core.Interfaces.Repository;
 using MediatR;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.Collections.Generic;
+
 
 namespace HospitalAM.Application.Handlers
 {
     public class GetAllHospitaisHandler : IRequestHandler<GetAllHospitaisQuery, List<Hospital>>
     {
-        private readonly IBaseCRUDRepository<Hospital> _hospitalRepository;
+        private readonly IHospitalRepository _hospitalRepository;
        
-        public GetAllHospitaisHandler(IBaseCRUDRepository<Hospital> hospitalRepository)
+        public GetAllHospitaisHandler(IHospitalRepository hospitalRepository)
         {
             _hospitalRepository = hospitalRepository;
         }

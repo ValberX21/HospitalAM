@@ -12,9 +12,9 @@ namespace HospitalAM.Application.Handlers
 {
     public class GetAllEmpresasHandler : IRequestHandler<GetAllEmpresasQuery, List<Empresa>>
     {
-        private readonly IBaseCRUDRepository<Empresa> _empresaRepository;
+        private readonly IEmpresaRepository _empresaRepository;
 
-        public GetAllEmpresasHandler(IBaseCRUDRepository<Empresa> empresaRepository)
+        public GetAllEmpresasHandler(IEmpresaRepository empresaRepository)
             => _empresaRepository = empresaRepository;
 
         public async Task<List<Empresa>> Handle(GetAllEmpresasQuery request, CancellationToken ct)

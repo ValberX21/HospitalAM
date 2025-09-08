@@ -46,9 +46,10 @@ namespace HospitalAM.Presentation.ViewModel
 
         public bool Ativo { get; set; } = true;
 
-        [Required(ErrorMessage = "A empresa é obrigatória.")]
+        [Required(ErrorMessage = "O Empresa é obrigatório.")]
         public int IdEmpresa { get; set; }
 
+        public IEnumerable<SelectListItem> Empresas { get; set; } = Enumerable.Empty<SelectListItem>();
         // ===== UI lists =====
         // For dropdown of hospitals
         public IEnumerable<SelectListItem> Hospitais { get; set; } = Enumerable.Empty<SelectListItem>();

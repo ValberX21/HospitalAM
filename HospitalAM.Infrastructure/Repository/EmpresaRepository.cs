@@ -1,10 +1,19 @@
 ﻿using HospitalAM.Core.Entities;
 using HospitalAM.Core.Interfaces.Repository;
+using HospitalAM.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace HospitalAM.Infrastructure.Repository
 {
-    public class EmpresaRepository : IBaseCRUDRepository<Empresa>
+    public class EmpresaRepository : IEmpresaRepository
     {
+        private readonly ApplicationDbContext _context;
+
+        public EmpresaRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public Task AddAsync(Empresa entity, CancellationToken ct = default)
         {
             throw new NotImplementedException();
@@ -15,9 +24,9 @@ namespace HospitalAM.Infrastructure.Repository
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Empresa>> GeAll(CancellationToken ct = default)
+        public async Task<IEnumerable<Empresa>> GeAll(CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            return await _context.Empresa.AsNoTracking().ToListAsync(ct);   
         }
 
         public Task<Empresa?> GetByIDAsync(int id, CancellationToken ct = default)

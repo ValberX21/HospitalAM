@@ -1,9 +1,7 @@
 ﻿using HospitalAM.Application.Commands;
-using HospitalAM.Core.Entities;
-using HospitalAM.Presentation.ViewModel;
+using HospitalAM.Application.ViewModel;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace HospitalAM.Presentation.Controllers
 {

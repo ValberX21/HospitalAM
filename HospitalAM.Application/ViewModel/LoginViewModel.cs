@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HospitalAM.Presentation.ViewModel
+namespace HospitalAM.Application.ViewModel
 {
     public class LoginViewModel
     {

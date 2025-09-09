@@ -1,4 +1,4 @@
-﻿@model HospitalAM.Presentation.ViewModel.MedicoViewModel
+﻿@model HospitalAM.Application.ViewModel.MedicoViewModel
 
 @{
     var isEdit = Model?.IdMedico > 0;
@@ -14,11 +14,7 @@
                 <div class="card-body">
                     <h2 class="card-title text-center mb-4">@ViewData["Title"]</h2>
 
-                    <form asp-action="@(isEdit ? "Edit" : "Create")"
-                          asp-controller="Medicos"
-                          method="post"
-                          class="needs-validation"
-                          novalidate>
+                    <form id="medicoForm">
                         @Html.AntiForgeryToken()
 
                         @if (isEdit)
@@ -149,5 +145,55 @@
 </div>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        document.getElementById("medicoForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const form = e.target;
+
+              const medico = {
+                idMedico: parseInt(document.getElementById("IdMedico")?.value || 0),
+                idEmpresa: parseInt(document.getElementById("IdEmpresa")?.value || 0),
+                idHospital: parseInt(document.getElementById("IdHospital")?.value || 0),
+                nome: document.getElementById("Nome")?.value || "",
+                cpf: document.getElementById("CPF")?.value || "",
+                dataNascimento: document.getElementById("DataNascimento")?.value || "",
+                genero: document.getElementById("Genero")?.value || "",
+                email: document.getElementById("Email")?.value || "",
+                telefone: document.getElementById("Telefone")?.value || "",
+                crm: document.getElementById("CRM")?.value || "",
+                endereco: document.getElementById("Endereco")?.value || "",
+                especialidade: document.getElementById("Especialidade")?.value || "",
+                ativo: document.getElementById("Ativo")?.checked || false
+            };
+
+
+            const isEdit = medico.id > 0;
+            const url = isEdit
+                ? `/Medico/Edit/${medico.id}`
+                : `/Medico/Create`;
+
+            const method = isEdit ? "PUT" : "POST";
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(medico)
+                });
+
+                if (response.ok) {
+                    window.location.href = "/Medico/Index";
+                } else {
+                    console.log("Erro ao salvar medico.");
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        });
+    </script>
 }

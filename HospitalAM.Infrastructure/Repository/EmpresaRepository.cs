@@ -14,7 +14,7 @@ namespace HospitalAM.Infrastructure.Repository
             _context = context;
         }
 
-        public Task AddAsync(Empresa entity, CancellationToken ct = default)
+        public Task<int> AddAsync(Empresa entity, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }

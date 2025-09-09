@@ -1,4 +1,4 @@
-﻿namespace HospitalAM.Presentation.ViewModel
+﻿namespace HospitalAM.Application.ViewModel
 {
     public class MedicoListItemViewModel
     {

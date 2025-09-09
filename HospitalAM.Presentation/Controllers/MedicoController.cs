@@ -1,9 +1,12 @@
-﻿using HospitalAM.Application.Queries;
+﻿using HospitalAM.Application.Commands;
+using HospitalAM.Application.Handlers;
+using HospitalAM.Application.Queries;
+using HospitalAM.Application.ViewModel;
 using HospitalAM.Core.Entities;
-using HospitalAM.Presentation.ViewModel;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace HospitalAM.Presentation.Controllers
 {
@@ -20,9 +23,7 @@ namespace HospitalAM.Presentation.Controllers
         public async Task<IActionResult> Index()
         {
             var vm = new MedicoViewModel
-            {
-                //Hospitais = await GetHospitaisSelectAsync(),
-                //Medicos = Enumerable.Empty<MedicoListItemViewModel>(),
+            {               
                 PageSize = 10,
                 PageNumber = 1
             };
@@ -32,12 +33,11 @@ namespace HospitalAM.Presentation.Controllers
         // CREATE (GET)
         [HttpGet]
         public async Task<IActionResult> goToCreate()
-        {
-            
+        {            
             var vm = new MedicoViewModel
             {
                 Ativo = true,
-                Hospitais = await GetHospitaisSelectAsync()    ,
+                Hospitais = await GetHospitaisSelectAsync(),
                 Empresas = await GetEmpresasSelectAsync()   
 
             };
@@ -47,8 +47,7 @@ namespace HospitalAM.Presentation.Controllers
 
         // CREATE (POST)
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(MedicoViewModel vm)
+        public async Task<IActionResult> Create([FromBody] MedicoViewModel vm, CancellationToken ct)
         {
             if (!ModelState.IsValid)
             {
@@ -56,8 +55,12 @@ namespace HospitalAM.Presentation.Controllers
                 return View("CreateEditMedico", vm);
             }
 
+            var command =  CreateMedicoCommand.FromViewModel(vm);
+            var id = await _mediator.Send(command, ct);
+
             // TODO: map + save
             TempData["Success"] = "Médico criado com sucesso.";
+           
             return RedirectToAction(nameof(Index));
         }
 

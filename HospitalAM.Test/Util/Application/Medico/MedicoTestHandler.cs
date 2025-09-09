@@ -19,7 +19,7 @@ public class MedicoTestHandler
         return new CreateMedicoHandler(_repoMock.Object, _uowMock.Object, _loggerMock.Object);
     }
 
-    [Fact(DisplayName = "Create Medico")]
+    [Fact(DisplayName = "Teste fluxo de Create Medico")]
     public async Task Create_Medico()
     {
         var ct = new CancellationToken();

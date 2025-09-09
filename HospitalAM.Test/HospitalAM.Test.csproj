@@ -12,8 +12,13 @@
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.0" />
     <PackageReference Include="FluentAssertions" Version="8.6.0" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="9.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
+    <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.2" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4">
       <PrivateAssets>all</PrivateAssets>
@@ -32,6 +37,7 @@
   <ItemGroup>
     <ProjectReference Include="..\HospitalAM.Application\HospitalAM.Application.csproj" />
     <ProjectReference Include="..\HospitalAM.Core\HospitalAM.Core.csproj" />
+    <ProjectReference Include="..\HospitalAM.Infrastructure\HospitalAM.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

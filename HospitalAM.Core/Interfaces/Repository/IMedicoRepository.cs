@@ -9,5 +9,6 @@ namespace HospitalAM.Core.Interfaces.Repository
 {
     public interface IMedicoRepository : IBaseCRUDRepository<Medico>
     {
+        Task<int> CountAsync(); 
     }
 }

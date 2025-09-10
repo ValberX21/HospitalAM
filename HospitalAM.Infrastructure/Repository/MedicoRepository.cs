@@ -23,22 +23,33 @@ namespace HospitalAM.Infrastructure.Repository
 
         }
 
-        public Task DeleteAsync(int id, CancellationToken ct = default)
+        public async Task<int> CountAsync()
+        {
+            return await _context.Medico.CountAsync();
+        }
+
+        public async Task DeleteAsync(int id, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Medico?> GetByIDAsync(int id, CancellationToken ct = default)
+        public async Task<Medico?> GetByIDAsync(int id, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Medico>> GetPages(int page, int pageSize, CancellationToken ct = default)
+        public async Task<IEnumerable<Medico>> GetPages(int page, int pageSize, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            return await _context.Medico
+                          .AsNoTracking()
+                          .OrderBy(m => m.IdMedico)
+                          .Skip((page - 1) * pageSize)
+                          .Take(pageSize)
+                          .ToListAsync(ct);
+
         }
 
-        public Task UpdateAsync(Medico entity, CancellationToken ct = default)
+        public async Task UpdateAsync(Medico entity, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }

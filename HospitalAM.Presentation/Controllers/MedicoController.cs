@@ -1,4 +1,5 @@
 ﻿using HospitalAM.Application.Commands;
+using HospitalAM.Application.DTOs;
 using HospitalAM.Application.Handlers;
 using HospitalAM.Application.Queries;
 using HospitalAM.Application.ViewModel;
@@ -6,7 +7,6 @@ using HospitalAM.Core.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace HospitalAM.Presentation.Controllers
 {
@@ -20,13 +20,20 @@ namespace HospitalAM.Presentation.Controllers
 
         // LIST
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
         {
+            var paged = await _mediator.Send(new GetAllMedicosQuery(page, pageSize));
+
             var vm = new MedicoViewModel
-            {               
-                PageSize = 10,
-                PageNumber = 1
-            };
+            {
+                PageSize = paged.PageSize,
+                PageNumber = page,
+
+                TotalCount = paged.TotalItems,
+                Medicos = paged.Items
+            };           
+
+            
             return View(vm);
         }
 
@@ -44,6 +51,14 @@ namespace HospitalAM.Presentation.Controllers
 
             return View("CreateEditMedico", vm); 
         }
+
+        [HttpGet]
+        public async Task<IEnumerable<MedicoListItemViewModel>> listMedicos(int page =  1, int pageSize = 5)
+        {
+            var paged =  await _mediator.Send(new GetAllMedicosQuery(page, pageSize));
+            return paged.Items;
+        }
+
 
         // CREATE (POST)
         [HttpPost]
@@ -63,25 +78,6 @@ namespace HospitalAM.Presentation.Controllers
            
             return RedirectToAction(nameof(Index));
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         // EDIT (GET)
@@ -129,6 +125,14 @@ namespace HospitalAM.Presentation.Controllers
             TempData["Success"] = "Médico atualizado com sucesso.";
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id)
+        {
+            //await _mediator.DeleteAsync(id);
+            return Ok();
+        }
+
 
         // Helper to populate dropdown
         private async Task<IEnumerable<SelectListItem>> GetHospitaisSelectAsync(int? hospitalId = null)

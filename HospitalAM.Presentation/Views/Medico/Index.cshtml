@@ -41,9 +41,9 @@
                     <select name="HospitalFilter" class="form-select">
                         <option value="">Todos os hospitais</option>
                         @foreach (var h in Model.Hospitais)
-                                                {
-                        <option value="@h.Value" selected="@(h.Selected ? "selected" : null)">@h.Text</option>
-                                                }
+                        {
+                            <option value="@h.Value" selected="@(h.Selected ? "selected" : null)">@h.Text</option>
+                        }
                     </select>
                 </div>
 
@@ -76,81 +76,173 @@
                     <th class="d-none d-lg-table-cell">Email</th>
                     <th class="d-none d-md-table-cell">Hospital</th>
                     <th class="d-none d-sm-table-cell">Status</th>
-                    <th style="width:140px;">Ações</th>
+                    <th style="width:160px;">Ações</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var m in Model.Medicos)
-                                {
-                <tr>
-                    <td>
-                        <span class="d-inline-block text-truncate" style="max-width: 220px;">@m.Nome</span>
-                    </td>
-                    <td class="d-none d-sm-table-cell">
-                        @(string.IsNullOrWhiteSpace(m.Especialidade) ? "-" : m.Especialidade)
-                    </td>
-                    <td class="d-none d-lg-table-cell">@m.CRM</td>
-                    <td class="d-none d-lg-table-cell">
-                        <span class="d-inline-block text-truncate" style="max-width: 220px;">@m.Email</span>
-                    </td>
-                    <td class="d-none d-md-table-cell">
-                        @(string.IsNullOrWhiteSpace(m.HospitalNome) ? "-" : m.HospitalNome)
-                    </td>
-                    <td class="d-none d-sm-table-cell">@TranslateAtivo(m.Ativo)</td>
-                    <td class="text-nowrap">
-                        <div class="btn-group btn-group-sm" role="group">
-                            <a asp-action="Details" asp-controller="Medicos" asp-route-id="@m.IdMedico"
-                               class="btn btn-outline-info" title="Detalhes"><i class="bi bi-eye"></i></a>
-                            <a asp-action="Edit" asp-controller="Medicos" asp-route-id="@m.IdMedico"
-                               class="btn btn-outline-warning" title="Editar"><i class="bi bi-pencil"></i></a>
-                        </div>
-                    </td>
-                </tr>
-                                }
+                @if (Model.Medicos is null || !Model.Medicos.Any())
+                {
+                    <tr>
+                        <td colspan="7" class="text-center py-4">Nenhum médico encontrado.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var m in Model.Medicos)
+                    {
+                        <tr>
+                            <td>
+                                <span class="d-inline-block text-truncate" style="max-width: 220px;">@m.Nome</span>
+                            </td>
+                            <td class="d-none d-sm-table-cell">
+                                @(string.IsNullOrWhiteSpace(m.Especialidade) ? "-" : m.Especialidade)
+                            </td>
+                            <td class="d-none d-lg-table-cell">@m.CRM</td>
+                            <td class="d-none d-lg-table-cell">
+                                <span class="d-inline-block text-truncate" style="max-width: 220px;">@m.Email</span>
+                            </td>
+                            <td class="d-none d-md-table-cell">
+                                @(string.IsNullOrWhiteSpace(m.HospitalNome) ? "-" : m.HospitalNome)
+                            </td>
+                            <td class="d-none d-sm-table-cell">@TranslateAtivo(m.Ativo)</td>
+                            <td class="text-nowrap">
+                                <div class="btn-group btn-group-sm" role="group" aria-label="Ações do médico">
+                                    <!-- Detalhes -->
+                                    <a asp-action="Details" asp-controller="Medico" asp-route-id="@m.IdMedico"
+                                       class="btn btn-outline-secondary" title="Detalhes" data-bs-toggle="tooltip">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                    <!-- Editar -->
+                                    <a asp-action="Edit" asp-controller="Medico" asp-route-id="@m.IdMedico"
+                                       class="btn btn-outline-primary" title="Editar" data-bs-toggle="tooltip">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+
+                                    <!-- Excluir (abre modal) -->
+                                    <button type="button"
+                                            class="btn btn-outline-danger"
+                                            title="Excluir"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#confirmDeleteModal"
+                                            data-id="@m.IdMedico"
+                                            data-name="@m.Nome">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
             </tbody>
         </table>
     </div>
 
     @if (Model.TotalPages > 1)
-        {
-    <nav aria-label="Paginação de médicos" class="mt-3 d-flex justify-content-center">
-        <ul class="pagination mb-0">
-            <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
-                <a class="page-link"
-                   asp-action="Index"
-                   asp-route-pageNumber="@(Model.PageNumber - 1)"
-                   asp-route-pageSize="@Model.PageSize"
-                   asp-route-NomeFilter="@Model.NomeFilter"
-                   asp-route-EspecialidadeFilter="@Model.EspecialidadeFilter"
-                   asp-route-HospitalFilter="@Model.HospitalFilter"
-                   asp-route-AtivoFilter="@Model.AtivoFilter">« Anterior</a>
-            </li>
+    {
+        <nav aria-label="Paginação de médicos" class="mt-3 d-flex justify-content-center">
+            <ul class="pagination mb-0">
+                <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(Model.PageNumber - 1)"
+                       asp-route-pageSize="@Model.PageSize"
+                       asp-route-NomeFilter="@Model.NomeFilter"
+                       asp-route-EspecialidadeFilter="@Model.EspecialidadeFilter"
+                       asp-route-HospitalFilter="@Model.HospitalFilter"
+                       asp-route-AtivoFilter="@Model.AtivoFilter">« Anterior</a>
+                </li>
 
-            @for (var i = 1; i <= Model.TotalPages; i++)
-                        {
-            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                <a class="page-link"
-                   asp-action="Index"
-                   asp-route-pageNumber="@i"
-                   asp-route-pageSize="@Model.PageSize"
-                   asp-route-NomeFilter="@Model.NomeFilter"
-                   asp-route-EspecialidadeFilter="@Model.EspecialidadeFilter"
-                   asp-route-HospitalFilter="@Model.HospitalFilter"
-                   asp-route-AtivoFilter="@Model.AtivoFilter">@i</a>
-            </li>
-                        }
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-pageSize="@Model.PageSize"
+                           asp-route-NomeFilter="@Model.NomeFilter"
+                           asp-route-EspecialidadeFilter="@Model.EspecialidadeFilter"
+                           asp-route-HospitalFilter="@Model.HospitalFilter"
+                           asp-route-AtivoFilter="@Model.AtivoFilter">@i</a>
+                    </li>
+                }
 
-            <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
-                <a class="page-link"
-                   asp-action="Index"
-                   asp-route-pageNumber="@(Model.PageNumber + 1)"
-                   asp-route-pageSize="@Model.PageSize"
-                   asp-route-NomeFilter="@Model.NomeFilter"
-                   asp-route-EspecialidadeFilter="@Model.EspecialidadeFilter"
-                   asp-route-HospitalFilter="@Model.HospitalFilter"
-                   asp-route-AtivoFilter="@Model.AtivoFilter">Próxima »</a>
-            </li>
-        </ul>
-    </nav>
-        }
+                <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(Model.PageNumber + 1)"
+                       asp-route-pageSize="@Model.PageSize"
+                       asp-route-NomeFilter="@Model.NomeFilter"
+                       asp-route-EspecialidadeFilter="@Model.EspecialidadeFilter"
+                       asp-route-HospitalFilter="@Model.HospitalFilter"
+                       asp-route-AtivoFilter="@Model.AtivoFilter">Próxima »</a>
+                </li>
+            </ul>
+        </nav>
+    }
 </div>
+
+<!-- Modal de confirmação de exclusão -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteLabel">Confirmar exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+                Tem certeza que deseja excluir o médico <strong id="deleteName"></strong>?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+                <form id="deleteForm" class="d-inline" onsubmit="return false;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="deleteId" />
+                    <button class="btn btn-danger" id="btnConfirmDelete">
+                        <i class="bi bi-trash"></i> Excluir
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+            const deleteModal = document.getElementById('confirmDeleteModal');
+        if (deleteModal) {
+          deleteModal.addEventListener('show.bs.modal', function (event) {
+            const btn = event.relatedTarget;
+            this.querySelector('#deleteId').value = btn.getAttribute('data-id');
+            const name = btn.getAttribute('data-name');
+            const nameSpan = this.querySelector('#deleteName');
+            if (nameSpan) nameSpan.textContent = name;
+          });
+        }
+
+        // Envia DELETE com Anti-Forgery
+        document.getElementById('btnConfirmDelete')?.addEventListener('click', async () => {
+          const id = document.getElementById('deleteId').value;
+          const token = document.querySelector('#deleteForm input[name="__RequestVerificationToken"]').value;
+
+          try {
+            const resp = await fetch(`/Medico/Delete/${id}`, {
+              method: 'DELETE',
+              headers: { 'RequestVerificationToken': token }
+            });
+
+            if (resp.ok) {
+              // recarrega ou remove linha da tabela
+              location.reload();
+            } else {
+              console.error('Erro ao excluir');
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        });
+    </script>
+}

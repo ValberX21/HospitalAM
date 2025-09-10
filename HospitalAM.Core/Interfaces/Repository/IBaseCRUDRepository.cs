@@ -4,7 +4,7 @@
     {
         Task<int> AddAsync(T entity, CancellationToken ct = default);
         Task UpdateAsync(T entity, CancellationToken ct = default);
-        Task DeleteAsync(int id, CancellationToken ct = default);
+        Task<bool> DeleteAsync(int id, CancellationToken ct = default);
         Task<IEnumerable<T>> GetPages(int page, int pageSize, CancellationToken ct = default);       
         Task<T?> GetByIDAsync(int id, CancellationToken ct = default);
 

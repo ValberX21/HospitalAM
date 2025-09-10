@@ -20,7 +20,7 @@ namespace HospitalAM.Infrastructure.Repository
             throw new NotImplementedException();
         }
 
-        public Task DeleteAsync(int id, CancellationToken ct = default)
+        public async Task<bool> DeleteAsync(int id, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }

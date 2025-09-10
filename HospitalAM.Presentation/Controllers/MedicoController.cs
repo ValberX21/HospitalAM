@@ -59,7 +59,6 @@ namespace HospitalAM.Presentation.Controllers
             return paged.Items;
         }
 
-
         // CREATE (POST)
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] MedicoViewModel vm, CancellationToken ct)
@@ -129,8 +128,14 @@ namespace HospitalAM.Presentation.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
-            //await _mediator.DeleteAsync(id);
-            return Ok();
+
+            bool sucesso = await _mediator.Send(new DeleteMedicoCommand(id));
+           
+            if (sucesso)
+                return Ok();
+
+            return BadRequest();
+
         }
 
 

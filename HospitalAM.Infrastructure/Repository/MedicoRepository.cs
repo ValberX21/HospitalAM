@@ -28,9 +28,20 @@ namespace HospitalAM.Infrastructure.Repository
             return await _context.Medico.CountAsync();
         }
 
-        public async Task DeleteAsync(int id, CancellationToken ct = default)
+        public async Task<bool> DeleteAsync(int id, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            Medico medico = await _context.Medico.FindAsync(id);
+
+            if (medico != null)
+            {
+                 _context.Medico.Remove(medico);
+                await _context.SaveChangesAsync(ct);
+                return true;
+            }
+            else
+            {               
+                return false;
+            }               
         }
 
         public async Task<Medico?> GetByIDAsync(int id, CancellationToken ct = default)

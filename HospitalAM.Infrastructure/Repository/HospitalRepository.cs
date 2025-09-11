@@ -40,7 +40,7 @@ namespace HospitalAM.Infrastructure.Repository
             throw new NotImplementedException();
         }
 
-        public Task UpdateAsync(Hospital entity, CancellationToken ct = default)
+        public Task<int> UpdateAsync(Hospital entity, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }

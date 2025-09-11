@@ -151,9 +151,9 @@
         document.getElementById("medicoForm").addEventListener("submit", async function (e) {
             e.preventDefault();
 
-            const form = e.target;
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
 
-              const medico = {
+            const medico = {
                 idMedico: parseInt(document.getElementById("IdMedico")?.value || 0),
                 idEmpresa: parseInt(document.getElementById("IdEmpresa")?.value || 0),
                 idHospital: parseInt(document.getElementById("IdHospital")?.value || 0),
@@ -169,19 +169,20 @@
                 ativo: document.getElementById("Ativo")?.checked || false
             };
 
+            const isEdit = medico.idMedico > 0;
 
-            const isEdit = medico.id > 0;
             const url = isEdit
-                ? `/Medico/Edit/${medico.id}`
+                ? `/Medico/Edit`   ///${medico.idMedico} match route template
                 : `/Medico/Create`;
 
-            const method = isEdit ? "PUT" : "POST";
+            const method = isEdit ? "PUT" : "POST";   // if you chose option B (PUT), change to: isEdit ? "PUT" : "POST"
 
             try {
                 const response = await fetch(url, {
                     method: method,
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "RequestVerificationToken": token   // anti-forgery header
                     },
                     body: JSON.stringify(medico)
                 });
@@ -189,11 +190,12 @@
                 if (response.ok) {
                     window.location.href = "/Medico/Index";
                 } else {
-                    console.log("Erro ao salvar medico.");
+                    console.log("Erro ao salvar médico.");
                 }
             } catch (err) {
                 console.log(err);
             }
         });
     </script>
+
 }

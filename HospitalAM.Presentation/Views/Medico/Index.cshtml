@@ -108,15 +108,18 @@
                             <td class="text-nowrap">
                                 <div class="btn-group btn-group-sm" role="group" aria-label="Ações do médico">
                                     <!-- Detalhes -->
-                                    <a asp-action="Details" asp-controller="Medico" asp-route-id="@m.IdMedico"
+                                    @* <a asp-action="Details" asp-controller="Medico" asp-route-id="@m.IdMedico"
                                        class="btn btn-outline-secondary" title="Detalhes" data-bs-toggle="tooltip">
                                         <i class="bi bi-eye"></i>
-                                    </a>
+                                    </a> *@
 
                                     <!-- Editar -->
-                                    <a asp-action="Edit" asp-controller="Medico" asp-route-id="@m.IdMedico"
-                                       class="btn btn-outline-primary" title="Editar" data-bs-toggle="tooltip">
-                                        <i class="bi bi-pencil-square"></i>
+                                    <a asp-action="GotoEditClintPage"
+                                       asp-controller="Medico"
+                                       asp-route-id="@m.IdMedico"
+                                       class="btn btn-sm btn-outline-primary"
+                                       title="Editar cliente">
+                                        <i class="bi bi-journal-text"></i>
                                     </a>
 
                                     <!-- Excluir (abre modal) -->

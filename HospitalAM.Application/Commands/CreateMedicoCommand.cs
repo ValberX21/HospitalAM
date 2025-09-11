@@ -7,6 +7,7 @@ namespace HospitalAM.Application.Commands
 {
     public class CreateMedicoCommand :IRequest<int>
     {
+        public int IdMedico { get; init; }
         public int IdHospital { get; init; }
         public string Nome { get; init; } = string.Empty;
         public string CPF { get; init; } = string.Empty;
@@ -25,6 +26,7 @@ namespace HospitalAM.Application.Commands
 
         public static CreateMedicoCommand FromViewModel(MedicoViewModel vm) => new()
         {
+            IdMedico =  vm.IdMedico,
             IdHospital = vm.IdHospital,
             Nome = vm.Nome?.Trim() ?? string.Empty,
             CPF = OnlyDigits(vm.CPF),                 // garante 11 dígitos
@@ -41,6 +43,7 @@ namespace HospitalAM.Application.Commands
 
         public Medico ToEntity() => new()
         {
+            IdMedico = IdMedico,
             IdHospital = IdHospital,
             Nome = Nome,
             CPF = CPF,

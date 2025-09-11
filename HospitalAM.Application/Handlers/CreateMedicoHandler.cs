@@ -26,8 +26,10 @@ namespace HospitalAM.Application.Handlers
 
         public async Task<int> Handle(CreateMedicoCommand request, CancellationToken cancellationToken)
         {
+           
            var medico =  new Medico
-            {
+           {
+                IdMedico = request.IdMedico,
                 IdHospital = request.IdHospital,
                 Nome = request.Nome,
                 CPF = NormalizeDigits(request.CPF),
@@ -42,9 +44,19 @@ namespace HospitalAM.Application.Handlers
                 IdEmpresa = request.IdEmpresa
             };
 
-            await _medicoRepository.AddAsync(medico);
-            await _unitOfWork.CommitAsync(cancellationToken);
-            return medico.IdMedico; 
+            if(request.IdMedico == 0)
+            {
+                await _medicoRepository.AddAsync(medico);
+                await _unitOfWork.CommitAsync(cancellationToken);
+                return medico.IdMedico;
+            }
+            else
+            {
+                await _medicoRepository.UpdateAsync(medico);
+                await _unitOfWork.CommitAsync(cancellationToken);
+                return medico.IdMedico;
+            }
+                   
         }
 
         private static string NormalizeDigits(string s) =>

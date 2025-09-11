@@ -30,7 +30,7 @@ namespace HospitalAM.Infrastructure.Repository
 
         public async Task<bool> DeleteAsync(int id, CancellationToken ct = default)
         {
-            Medico medico = await _context.Medico.FindAsync(id);
+            Medico? medico = await _context.Medico.FindAsync(id);
 
             if (medico != null)
             {
@@ -46,7 +46,12 @@ namespace HospitalAM.Infrastructure.Repository
 
         public async Task<Medico?> GetByIDAsync(int id, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            Medico? medico = await _context.Medico.FirstOrDefaultAsync(m => m.IdMedico == id, ct);
+
+            if (medico != null) 
+                return medico;
+
+            return null;
         }
 
         public async Task<IEnumerable<Medico>> GetPages(int page, int pageSize, CancellationToken ct = default)
@@ -60,9 +65,11 @@ namespace HospitalAM.Infrastructure.Repository
 
         }
 
-        public async Task UpdateAsync(Medico entity, CancellationToken ct = default)
+        public async Task<int> UpdateAsync(Medico entity, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            _context.Medico.Update(entity);
+            await _context.SaveChangesAsync(ct);
+            return entity.IdMedico;
         }
     }
 }

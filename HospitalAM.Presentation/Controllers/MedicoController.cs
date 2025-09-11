@@ -53,6 +53,26 @@ namespace HospitalAM.Presentation.Controllers
         }
 
         [HttpGet]
+        public async Task<IActionResult> GotoEditClintPage(int id)
+        {
+            MedicoViewModel paged = await _mediator.Send(new GetByIdMedicosCommand(id));
+
+            paged.Hospitais = await GetHospitaisSelectAsync();
+            paged.Empresas = await GetEmpresasSelectAsync();
+
+            var vm = new MedicoViewModel
+            {
+
+                Ativo = true,
+                Hospitais = await GetHospitaisSelectAsync(),
+                Empresas = await GetEmpresasSelectAsync()
+
+            };
+
+            return View("CreateEditMedico", paged);
+        }
+
+        [HttpGet]
         public async Task<IEnumerable<MedicoListItemViewModel>> listMedicos(int page =  1, int pageSize = 5)
         {
             var paged =  await _mediator.Send(new GetAllMedicosQuery(page, pageSize));
@@ -65,7 +85,7 @@ namespace HospitalAM.Presentation.Controllers
         {
             if (!ModelState.IsValid)
             {
-                vm.Hospitais = await GetHospitaisSelectAsync(vm.IdHospital); // repopulate on error
+                vm.Hospitais = await GetHospitaisSelectAsync(vm.IdHospital); 
                 return View("CreateEditMedico", vm);
             }
 
@@ -78,65 +98,40 @@ namespace HospitalAM.Presentation.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
-        // EDIT (GET)
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
-        {
-            // TODO: get from DB
-            // if (medico == null) return NotFound();
-
-            var vm = new MedicoViewModel
-            {
-                IdMedico = id,
-                IdEmpresa = 1,
-                IdHospital = 2,
-                Nome = "Dr. Exemplo",
-                CPF = "12345678901",
-                DataNascimento = new DateTime(1985, 5, 23),
-                Genero = "M",
-                Email = "exemplo@hospital.com",
-                Telefone = "11999999999",
-                Endereco = "Rua X, 123",
-                CRM = "12345-SP",
-                Especialidade = "Clínico Geral",
-                Ativo = true,
-                Hospitais = await GetHospitaisSelectAsync(2)
-            };
-
-            return View("CreateEditMedico", vm);
-        }
-
-        // EDIT (POST)
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, MedicoViewModel vm)
-        {
-            if (id != vm.IdMedico) return BadRequest();
-
-            if (!ModelState.IsValid)
-            {
-                vm.Hospitais = await GetHospitaisSelectAsync(vm.IdHospital);
-                return View("CreateEditMedico", vm);
-            }
-
-            // TODO: map + update
-            TempData["Success"] = "Médico atualizado com sucesso.";
-            return RedirectToAction(nameof(Index));
-        }
-
+        // DELETE
         [HttpDelete]
         public async Task<IActionResult> Delete(int id)
         {
 
             bool sucesso = await _mediator.Send(new DeleteMedicoCommand(id));
-           
+
             if (sucesso)
                 return Ok();
 
             return BadRequest();
 
         }
+
+        [HttpPut]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit([FromBody] MedicoViewModel vm, CancellationToken ct)
+        {
+            if (!ModelState.IsValid)
+            {
+                vm.Hospitais = await GetHospitaisSelectAsync(vm.IdHospital);
+                return View("CreateEditMedico", vm);
+            }
+
+            var command = CreateMedicoCommand.FromViewModel(vm);
+            var id = await _mediator.Send(command, ct);
+
+            // TODO: map + save
+            TempData["Success"] = "Médico criado com sucesso.";
+
+            return View("Index", vm);
+        }
+
+        
 
 
         // Helper to populate dropdown

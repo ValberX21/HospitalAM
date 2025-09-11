@@ -1,5 +1,5 @@
-﻿using HospitalAM.Application.Commands;
-using HospitalAM.Application.DTOs;
+﻿using HospitalAM.Application.DTOs;
+using HospitalAM.Application.Queries;
 using HospitalAM.Application.ViewModel;
 using HospitalAM.Core.Interfaces.Repository;
 using MediatR;
@@ -12,6 +12,7 @@ namespace HospitalAM.Application.Handlers
     {
         private readonly IMedicoRepository _medicoRepository;
         private readonly IHospitalRepository _hospitalRepository;
+
         public GetAllMedicosHandler(IMedicoRepository medicoRepository, IHospitalRepository hospitalRepository)
         {
             _medicoRepository = medicoRepository;

@@ -1,0 +1,257 @@
+﻿@using HospitalAM.Application.ViewModel
+@model HospitalAM.Application.ViewModel.PacienteViewModel
+@{
+    ViewData["Title"] = "Lista de Pacientes";
+}
+
+@functions {
+    public static string TranslateAtivo(bool ativo) => ativo ? "Ativo" : "Inativo";
+}
+
+<div class="container-xl py-4 px-3 px-md-5">
+    <!-- Título + ações -->
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+        <h2 class="mb-0">Pacientes</h2>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-secondary d-md-none" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#filters">
+                Filtros
+            </button>
+            <a asp-controller="Paciente" asp-action="GoToCreate" class="btn btn-primary">
+                <i class="bi bi-plus-lg"></i> Novo Paciente
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div id="filters" class="collapse d-md-block">
+        <form asp-action="Index" method="get" class="mb-3">
+            <div class="row g-2 align-items-end">
+                <div class="col-12 col-sm-6 col-md-3">
+                    <input type="text" name="NomeFilter" value="@Model.NomeFilter"
+                           class="form-control" placeholder="Filtrar por nome..." autocomplete="off" />
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    <input type="text" name="CpfFilter" value="@Model.CpfFilter"
+                           class="form-control" placeholder="CPF (somente números)..." autocomplete="off" />
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    <input type="text" name="PlanoSaudeFilter" value="@Model.PlanoSaudeFilter"
+                           class="form-control" placeholder="Plano de saúde..." autocomplete="off" />
+                </div>
+
+                <div class="col-12 col-sm-6 col-md-3">
+                    <select name="EmpresaFilter" class="form-select">
+                        <option value="">Todas as empresas</option>
+                        @foreach (var e in Model.Empresas)  // no ?? needed because initialized to new()
+                        {
+                            <option value="@e.Value" selected="@(e.Selected ? "selected" : null)">@e.Text</option>
+                        }
+
+                    </select>
+                </div>
+
+                <div class="col-6 col-sm-3 col-md-2">
+                    <select name="AtivoFilter" class="form-select">
+                        <option value="">Ativos e inativos</option>
+                        <option value="true" selected="@(Model.AtivoFilter == true)">Somente ativos</option>
+                        <option value="false" selected="@(Model.AtivoFilter == false)">Somente inativos</option>
+                    </select>
+                </div>
+
+                <div class="col-6 col-sm-3 col-md-auto d-grid">
+                    <input type="hidden" name="pageSize" value="@Model.PageSize" />
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tabela -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>Nome</th>
+                    <th class="d-none d-lg-table-cell">CPF</th>
+                    <th class="d-none d-lg-table-cell">Email</th>
+                    <th class="d-none d-sm-table-cell">Telefone</th>
+                    <th class="d-none d-md-table-cell">Empresa</th>
+                    <th class="d-none d-sm-table-cell">Plano</th>
+                    <th class="d-none d-sm-table-cell">Status</th>
+                    <th style="width:160px;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Pacientes is null || !Model.Pacientes.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-4">Nenhum paciente encontrado.</td>
+                    </tr>
+                }
+                else
+                {
+                    foreach (var p in Model.Pacientes)
+                    {
+                        <tr>
+                            <td>
+                                <span class="d-inline-block text-truncate" style="max-width: 220px;">@p.Nome</span>
+                            </td>
+                            <td class="d-none d-lg-table-cell">@p.CPF</td>
+                            <td class="d-none d-lg-table-cell">
+                                <span class="d-inline-block text-truncate" style="max-width: 220px;">@p.Email</span>
+                            </td>
+                            <td class="d-none d-sm-table-cell">
+                                @(string.IsNullOrWhiteSpace(p.Telefone) ? "-" : p.Telefone)
+                            </td>
+                            <td class="d-none d-md-table-cell">
+                                @(string.IsNullOrWhiteSpace(p.EmpresaNome) ? "-" : p.EmpresaNome)
+                            </td>
+                            <td class="d-none d-sm-table-cell">
+                                @(string.IsNullOrWhiteSpace(p.PlanoSaude) ? "-" : p.PlanoSaude)
+                            </td>
+                            <td class="d-none d-sm-table-cell">@TranslateAtivo(p.Ativo)</td>
+                            <td class="text-nowrap">
+                                <div class="btn-group btn-group-sm" role="group" aria-label="Ações do paciente">
+                                    <!-- Editar -->
+                                    <a asp-action="GotoEditClintPage"
+                                       asp-controller="Paciente"
+                                       asp-route-id="@p.IdPaciente"
+                                       class="btn btn-sm btn-outline-primary"
+                                       title="Editar paciente">
+                                        <i class="bi bi-journal-text"></i>
+                                    </a>
+
+                                    <!-- Excluir -->
+                                    <button type="button"
+                                            class="btn btn-outline-danger"
+                                            title="Excluir"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#confirmDeleteModal"
+                                            data-id="@p.IdPaciente"
+                                            data-name="@p.Nome">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav aria-label="Paginação de pacientes" class="mt-3 d-flex justify-content-center">
+            <ul class="pagination mb-0">
+                <li class="page-item @(Model.PageNumber <= 1 ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(Model.PageNumber - 1)"
+                       asp-route-pageSize="@Model.PageSize"
+                       asp-route-NomeFilter="@Model.NomeFilter"
+                       asp-route-CpfFilter="@Model.CpfFilter"
+                       asp-route-PlanoSaudeFilter="@Model.PlanoSaudeFilter"
+                       asp-route-EmpresaFilter="@Model.EmpresaFilter"
+                       asp-route-AtivoFilter="@Model.AtivoFilter">« Anterior</a>
+                </li>
+
+                @for (var i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link"
+                           asp-action="Index"
+                           asp-route-page="@i"
+                           asp-route-pageSize="@Model.PageSize"
+                           asp-route-NomeFilter="@Model.NomeFilter"
+                           asp-route-CpfFilter="@Model.CpfFilter"
+                           asp-route-PlanoSaudeFilter="@Model.PlanoSaudeFilter"
+                           asp-route-EmpresaFilter="@Model.EmpresaFilter"
+                           asp-route-AtivoFilter="@Model.AtivoFilter">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(Model.PageNumber >= Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link"
+                       asp-action="Index"
+                       asp-route-page="@(Model.PageNumber + 1)"
+                       asp-route-pageSize="@Model.PageSize"
+                       asp-route-NomeFilter="@Model.NomeFilter"
+                       asp-route-CpfFilter="@Model.CpfFilter"
+                       asp-route-PlanoSaudeFilter="@Model.PlanoSaudeFilter"
+                       asp-route-EmpresaFilter="@Model.EmpresaFilter"
+                       asp-route-AtivoFilter="@Model.AtivoFilter">Próxima »</a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>
+
+<!-- Modal de confirmação de exclusão -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteLabel">Confirmar exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+                Tem certeza que deseja excluir o paciente <strong id="deleteName"></strong>?
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+                <form id="deleteForm" class="d-inline" onsubmit="return false;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="deleteId" />
+                    <button class="btn btn-danger" id="btnConfirmDelete">
+                        <i class="bi bi-trash"></i> Excluir
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const deleteModal = document.getElementById('confirmDeleteModal');
+        if (deleteModal) {
+          deleteModal.addEventListener('show.bs.modal', function (event) {
+            const btn = event.relatedTarget;
+            this.querySelector('#deleteId').value = btn.getAttribute('data-id');
+            const name = btn.getAttribute('data-name');
+            const nameSpan = this.querySelector('#deleteName');
+            if (nameSpan) nameSpan.textContent = name;
+          });
+        }
+
+        // Envia DELETE com Anti-Forgery
+        document.getElementById('btnConfirmDelete')?.addEventListener('click', async () => {
+          const id = document.getElementById('deleteId').value;
+          const token = document.querySelector('#deleteForm input[name="__RequestVerificationToken"]').value;
+
+          try {
+            const resp = await fetch(`/Paciente/Delete/${id}`, {
+              method: 'DELETE',
+              headers: { 'RequestVerificationToken': token }
+            });
+
+            if (resp.ok) {
+              location.reload();
+            } else {
+              console.error('Erro ao excluir');
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        });
+    </script>
+}

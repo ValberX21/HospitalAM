@@ -4,6 +4,7 @@ using HospitalAM.Application.Handlers;
 using HospitalAM.Application.Queries;
 using HospitalAM.Application.ViewModel;
 using HospitalAM.Core.Entities;
+using HospitalAM.Presentation.Helper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,10 +14,15 @@ namespace HospitalAM.Presentation.Controllers
     public class MedicoController : Controller
     {
         private readonly IMediator _mediator;
-        public MedicoController(IMediator mediator)
+        private readonly GetDrops _getDrops;
+
+        public MedicoController(IMediator mediator, GetDrops getDrops)
         {
             _mediator = mediator;
+            _getDrops = new GetDrops(_mediator);
         }
+
+       
 
         // LIST
         [HttpGet]
@@ -32,8 +38,7 @@ namespace HospitalAM.Presentation.Controllers
                 TotalCount = paged.TotalItems,
                 Medicos = paged.Items
             };           
-
-            
+                        
             return View(vm);
         }
 
@@ -44,8 +49,8 @@ namespace HospitalAM.Presentation.Controllers
             var vm = new MedicoViewModel
             {
                 Ativo = true,
-                Hospitais = await GetHospitaisSelectAsync(),
-                Empresas = await GetEmpresasSelectAsync()   
+                Hospitais = await _getDrops.GetHospitaisSelectAsync(),
+                Empresas = await _getDrops.GetEmpresas()   
 
             };
 
@@ -57,15 +62,15 @@ namespace HospitalAM.Presentation.Controllers
         {
             MedicoViewModel paged = await _mediator.Send(new GetByIdMedicosCommand(id));
 
-            paged.Hospitais = await GetHospitaisSelectAsync();
-            paged.Empresas = await GetEmpresasSelectAsync();
+            paged.Hospitais = await _getDrops.GetHospitaisSelectAsync();
+            paged.Empresas = await _getDrops.GetEmpresas();
 
             var vm = new MedicoViewModel
             {
 
                 Ativo = true,
-                Hospitais = await GetHospitaisSelectAsync(),
-                Empresas = await GetEmpresasSelectAsync()
+                Hospitais = await _getDrops.GetHospitaisSelectAsync(),
+                Empresas = await _getDrops.GetEmpresas()
 
             };
 
@@ -85,7 +90,7 @@ namespace HospitalAM.Presentation.Controllers
         {
             if (!ModelState.IsValid)
             {
-                vm.Hospitais = await GetHospitaisSelectAsync(vm.IdHospital); 
+                vm.Hospitais = await _getDrops.GetHospitaisSelectAsync(vm.IdHospital); 
                 return View("CreateEditMedico", vm);
             }
 
@@ -118,7 +123,7 @@ namespace HospitalAM.Presentation.Controllers
         {
             if (!ModelState.IsValid)
             {
-                vm.Hospitais = await GetHospitaisSelectAsync(vm.IdHospital);
+                vm.Hospitais = await _getDrops.GetHospitaisSelectAsync(vm.IdHospital);
                 return View("CreateEditMedico", vm);
             }
 
@@ -131,38 +136,7 @@ namespace HospitalAM.Presentation.Controllers
             return View("Index", vm);
         }
 
-        
-
-
-        // Helper to populate dropdown
-        private async Task<IEnumerable<SelectListItem>> GetHospitaisSelectAsync(int? hospitalId = null)
-        {
-            List<Hospital> hospitais = await _mediator.Send(new GetAllHospitaisQuery(hospitalId));
-
-            if (hospitais == null || hospitais.Count == 0)
-                return Enumerable.Empty<SelectListItem>();
-
-            return hospitais.Select(h => new SelectListItem
-            {
-                Value = h.IdHospital.ToString(),
-                Text = h.Nome,
-                Selected = (hospitalId.HasValue && h.IdHospital == hospitalId.Value)
-            });
-        }
-
-        private async Task<IEnumerable<SelectListItem>> GetEmpresasSelectAsync(int? empresaId = null)
-        {
-            List<Empresa> empresas = await _mediator.Send(new GetAllEmpresasQuery(empresaId));
-
-            if (empresas == null || empresas.Count == 0)
-                return Enumerable.Empty<SelectListItem>();
-
-            return empresas.Select(h => new SelectListItem
-            {
-                Value = h.IdEmpresa.ToString(),
-                Text = h.Nome,
-                Selected = (empresaId.HasValue && h.IdEmpresa == empresaId.Value)
-            });
-        }
+       
+       
     }
 }

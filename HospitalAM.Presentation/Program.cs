@@ -7,6 +7,7 @@ using HospitalAM.Core.Interfaces.Services;
 using HospitalAM.Infrastructure.Data;
 using HospitalAM.Infrastructure.Persistence;
 using HospitalAM.Infrastructure.Repository;
+using HospitalAM.Presentation.Helper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -45,7 +46,11 @@ builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
 
 builder.Services.AddScoped<IMedicoRepository, MedicoRepository>();
 
+builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<GetDrops>();
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

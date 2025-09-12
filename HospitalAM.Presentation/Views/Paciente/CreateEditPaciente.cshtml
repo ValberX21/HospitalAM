@@ -1,1 +1,188 @@
-﻿
+﻿@model HospitalAM.Application.ViewModel.PacienteViewModel
+
+@{
+    var isEdit = Model?.IdPaciente > 0;
+    ViewData["Title"] = isEdit ? "Editar paciente" : "Criar novo paciente";
+    var buttonLabel = isEdit ? "Atualizar paciente" : "Registrar paciente";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">@ViewData["Title"]</h2>
+
+                    <form id="pacienteForm">
+                        @Html.AntiForgeryToken()
+
+                        @if (isEdit)
+                        {
+                            <input type="hidden" asp-for="IdPaciente" />
+                        }
+
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="IdEmpresa" class="control-label">Empresa</label>
+                                    <select asp-for="IdEmpresa" asp-items="Model.Empresas" class="form-select">
+                                        <option value="">-- Selecione --</option>
+                                    </select>
+                                    <span asp-validation-for="IdEmpresa" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Genero" class="control-label"></label>
+                                    <select asp-for="Genero" class="form-select">
+                                        <option value="M">Masculino (M)</option>
+                                        <option value="F">Feminino (F)</option>
+                                        <option value="O">Outro (O)</option>
+                                    </select>
+                                    <span asp-validation-for="Genero" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Nome" class="control-label"></label>
+                            <input asp-for="Nome" class="form-control" maxlength="150" autocomplete="off" />
+                            <span asp-validation-for="Nome" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="CPF" class="control-label"></label>
+                                    <input asp-for="CPF" class="form-control" maxlength="11" inputmode="numeric" pattern="\d{11}" autocomplete="off" />
+                                    <span asp-validation-for="CPF" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="DataNascimento" class="control-label"></label>
+                                    <input asp-for="DataNascimento" type="date" class="form-control" />
+                                    <span asp-validation-for="DataNascimento" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Ativo" class="control-label d-block"></label>
+                                    <div class="form-check form-switch">
+                                        <input asp-for="Ativo" class="form-check-input" type="checkbox" role="switch" />
+                                        <label class="form-check-label" asp-for="Ativo">Ativo</label>
+                                    </div>
+                                    <span asp-validation-for="Ativo" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Email" class="control-label"></label>
+                                    <input asp-for="Email" type="email" class="form-control" autocomplete="off" />
+                                    <span asp-validation-for="Email" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Telefone" class="control-label"></label>
+                                    <input asp-for="Telefone" class="form-control" maxlength="20" autocomplete="off" />
+                                    <span asp-validation-for="Telefone" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Endereco" class="control-label"></label>
+                            <input asp-for="Endereco" class="form-control" maxlength="200" autocomplete="off" />
+                            <span asp-validation-for="Endereco" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="form-group mb-3">
+                                    <label asp-for="PlanoSaude" class="control-label"></label>
+                                    <input asp-for="PlanoSaude" class="form-control" maxlength="100" autocomplete="off" />
+                                    <span asp-validation-for="PlanoSaude" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="form-group mb-3">
+                                    <label asp-for="NumeroCarteiraPlano" class="control-label"></label>
+                                    <input asp-for="NumeroCarteiraPlano" class="form-control" maxlength="30" autocomplete="off" />
+                                    <span asp-validation-for="NumeroCarteiraPlano" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary w-100">@buttonLabel</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
+    <script>
+        document.getElementById("pacienteForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            const paciente = {
+                idPaciente: parseInt(document.getElementById("IdPaciente")?.value || 0),
+                idEmpresa: parseInt(document.getElementById("IdEmpresa")?.value || 0),
+
+                nome: document.getElementById("Nome")?.value || "",
+                cpf: document.getElementById("CPF")?.value || "",
+                dataNascimento: document.getElementById("DataNascimento")?.value || "",
+                genero: document.getElementById("Genero")?.value || "",
+
+                email: document.getElementById("Email")?.value || "",
+                telefone: document.getElementById("Telefone")?.value || "",
+
+                endereco: document.getElementById("Endereco")?.value || "",
+                planoSaude: document.getElementById("PlanoSaude")?.value || "",
+                numeroCarteiraPlano: document.getElementById("NumeroCarteiraPlano")?.value || "",
+                ativo: document.getElementById("Ativo")?.checked || false
+            };
+
+            const isEdit = paciente.idPaciente > 0;
+
+            const url = isEdit ? `/Paciente/Edit` : `/Paciente/Create`;
+            const method = isEdit ? "PUT" : "POST";
+
+            try {
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "RequestVerificationToken": token
+                    },
+                    body: JSON.stringify(paciente)
+                });
+
+                if (response.ok) {
+                    window.location.href = "/Paciente/Index";
+                } else {
+                    console.log("Erro ao salvar paciente.");
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        });
+    </script>
+}

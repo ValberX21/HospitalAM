@@ -41,8 +41,7 @@ namespace HospitalAM.Presentation.Controllers
                         
             return View(vm);
         }
-
-        // CREATE (GET)
+      
         [HttpGet]
         public async Task<IActionResult> goToCreate()
         {            
@@ -134,9 +133,6 @@ namespace HospitalAM.Presentation.Controllers
             TempData["Success"] = "Médico criado com sucesso.";
 
             return View("Index", vm);
-        }
-
-       
-       
+        }             
     }
 }

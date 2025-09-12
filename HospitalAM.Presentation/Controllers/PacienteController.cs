@@ -1,4 +1,5 @@
-﻿using HospitalAM.Application.Queries;
+﻿using HospitalAM.Application.Commands;
+using HospitalAM.Application.Queries;
 using HospitalAM.Application.ViewModel;
 using HospitalAM.Presentation.Helper;
 using MediatR;
@@ -30,11 +31,58 @@ namespace HospitalAM.Presentation.Controllers
                 TotalPages = paged.TotalPages,
                 Pacientes = paged.Items
             };
-
-
             
             vm.Empresas = await _getDrops.GetEmpresas();
             return View(vm);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> goToCreate()
+        {
+            var vm = new PacienteViewModel
+            {
+                Ativo = true,
+                Empresas = await _getDrops.GetEmpresas()
+            };
+
+            return View("CreateEditPaciente", vm);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] PacienteViewModel vm, CancellationToken ct)
+        {
+            if (!ModelState.IsValid)
+            {
+                vm.Empresas = await _getDrops.GetHospitaisSelectAsync(vm.IdEmpresa);
+                return View("CreateEditMedico", vm);
+            }
+
+            var command = CreatePacienteCommand.FromViewModel(vm);
+            var id = await _mediator.Send(command, ct);
+
+            TempData["Success"] = "Médico criado com sucesso.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        //[HttpPut]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit([FromBody] PacienteViewModel vm, CancellationToken ct)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        vm.Empresas = await _getDrops.GetHospitaisSelectAsync(vm.IdEmpresa);
+        //        return View("CreateEditPaciente", vm);
+        //    }
+
+        //    var command = CreatePacienteCommand.FromViewModel(vm);
+        //    var id = await _mediator.Send(command, ct);
+
+        //    // TODO: map + save
+        //    TempData["Success"] = "Médico criado com sucesso.";
+
+        //    return View("Index", vm);
+        //}
+
     }
 }

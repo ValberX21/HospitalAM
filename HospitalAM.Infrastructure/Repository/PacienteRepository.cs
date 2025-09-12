@@ -18,11 +18,11 @@ namespace HospitalAM.Infrastructure.Repository
         {
             _context = context;
         }
-
-
         public async Task<int> AddAsync(Paciente entity, CancellationToken ct = default)
         {
-            throw new NotImplementedException();
+            var paciente = await _context.AddAsync(entity);
+            await _context.SaveChangesAsync();
+            return entity.IdPaciente;
         }
 
         public async Task<int> CountAsync()
